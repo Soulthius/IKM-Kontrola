@@ -1,0 +1,16 @@
+-- Table: public.login
+
+-- DROP TABLE IF EXISTS public.login;
+
+CREATE TABLE IF NOT EXISTS public.login
+(
+    ime character varying COLLATE pg_catalog."default" NOT NULL,
+    lozinka character varying COLLATE pg_catalog."default" NOT NULL,
+    uloga character varying COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT "Login_pkey" PRIMARY KEY (ime)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.login
+    OWNER to postgres;

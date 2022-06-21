@@ -1,0 +1,18 @@
+-- Table: public.korisnici
+
+-- DROP TABLE IF EXISTS public.korisnici;
+
+CREATE TABLE IF NOT EXISTS public.korisnici
+(
+    ime character varying COLLATE pg_catalog."default",
+    id integer NOT NULL,
+    tip character varying COLLATE pg_catalog."default",
+    prezime character varying COLLATE pg_catalog."default",
+    datum date,
+    CONSTRAINT "Korisnici_pkey" PRIMARY KEY (id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.korisnici
+    OWNER to postgres;

@@ -1,0 +1,21 @@
+-- Table: public.evidencija
+
+-- DROP TABLE IF EXISTS public.evidencija;
+
+CREATE TABLE IF NOT EXISTS public.evidencija
+(
+    ime character varying COLLATE pg_catalog."default",
+    prezime character varying COLLATE pg_catalog."default",
+    tip character varying COLLATE pg_catalog."default",
+    id integer,
+    datum date,
+    vrijeme time without time zone,
+    ulazak character varying COLLATE pg_catalog."default",
+    rbroj integer NOT NULL,
+    CONSTRAINT evidencija_pkey PRIMARY KEY (rbroj)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.evidencija
+    OWNER to postgres;
