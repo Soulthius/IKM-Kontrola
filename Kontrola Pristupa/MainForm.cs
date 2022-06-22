@@ -247,7 +247,7 @@ namespace Kontrola_Pristupa
                     int br = command.ExecuteNonQuery();
                     if (br > 0)
                     {
-                        print2list($"Korisnk {obrisi.Name} {obrisi.Prezime}, sa ID:{obrisi.Id} je obrisan");
+                        print2list($"Korisnk {obrisi.Ime} {obrisi.Prezime}, sa ID:{obrisi.Id} je obrisan");
                     }
                     else
                     {
@@ -385,38 +385,62 @@ namespace Kontrola_Pristupa
         {
             string data = serialPortUlaz.ReadExisting();
             int id = int.Parse(data);
-            prolaz = "Ulaz";
-            if (data!=null)
+            if (korisnik.korisnikPostoji(id))
             {
-                if ((!korisnik.prviProlaz(id) || (korisnik.korisnikProlaz(id) == "Izlaz")))
+                prolaz = "Ulaz";
+                if (data != null)
                 {
-                    provjera(data, prolaz);
+                    if ((!korisnik.prviProlaz(id) || (korisnik.korisnikProlaz(id) == "Izlaz")))
+                    {
+                        provjera(data, prolaz);
+                    }
+                    else
+                    {
+                        zabrana(prolaz);
+                        print2list("Korisnik je vec usao");
+                        MessageBox.Show("Korisnik je vec usao");
+                    }
                 }
-                else 
-                {
-                    zabrana(prolaz);
-                    print2list("Korisnik je vec usao");
-                    MessageBox.Show("Korisnik je vec usao");
-                }
+            }
+            else 
+            {
+                print2list($"ID:{id} nije zabiljezen u bazi");
+                MessageBox.Show($"ID:{id} nije zabiljezen u bazi");
+                zabrana(prolaz);
             }
         }
         //G_DataReciveIzlaz: Ceka dok dodje nesta na izlazni buffer 
         private void SerialPort_DataReceivedIzlaz(object sender, SerialDataReceivedEventArgs e)
         {
-            prolaz = "Izlaz";
+            
+            
             string data = serialPortIzlaz.ReadExisting();
-            if (data != null)
+            int id = int.Parse(data);
+
+            if (korisnik.korisnikPostoji(id))
             {
-                if ((rbroj==1) || korisnik.korisnikProlaz(int.Parse(data)) == "Ulaz")
+
+                prolaz = "Izlaz";
+
+                if (data != null)
                 {
-                    provjera(data, prolaz);
+                    if ((rbroj == 1) || korisnik.korisnikProlaz(id) == "Ulaz")
+                    {
+                        provjera(data, prolaz);
+                    }
+                    else
+                    {
+                        zabrana(prolaz);
+                        print2list("Korisnik je vec izasao");
+                        MessageBox.Show("Korisnik je vec izasao");
+                    }
                 }
-                else
-                {
-                    zabrana(prolaz);
-                    print2list("Korisnik je vec izasao");
-                    MessageBox.Show("Korisnik je vec izasao");
-                }
+            }
+            else
+            {
+                print2list($"ID:{id} nije zabiljezen u bazi");
+                MessageBox.Show($"ID:{id} nije zabiljezen u bazi");
+                zabrana(prolaz);
             }
         }
 
@@ -445,7 +469,7 @@ namespace Kontrola_Pristupa
                     else
                     {
                         MessageBox.Show("Proslo je vrijeme smijene, zatrazite pomoc od operatera");
-                        print2list($"Kartica  ID: {data}, ocitana na {tipulaza}u je validna, vrijeme  smjene: {timeSpan.ToString("T")}");
+                        print2list($"Kartica  ID: {data}, ocitana na {tipulaza}u je validna, vrijeme van smjene: {timeSpan.ToString("T")}");
                         sendTCP("Zabrana");
                         RucnaDozvola = true;
                         zabrana(tipulaza);
@@ -483,7 +507,7 @@ namespace Kontrola_Pristupa
             try
             {
                 connect.Open();
-            
+                
                     string naredba2 = $"INSERT INTO public.evidencija(ime, prezime, tip, id, datum, vrijeme,ulazak, rbroj) VALUES ('{korisnik.Ime}','{korisnik.Prezime}','{korisnik.Tip}','{korisnik.Id}','{korisnik.Datum}','{timeSpan}','{tipUlaza}','{rbroj}')";
                     NpgsqlCommand Command = new NpgsqlCommand(naredba2, connect);
                     int br = Command.ExecuteNonQuery();
@@ -548,7 +572,7 @@ namespace Kontrola_Pristupa
                 sendTCP(strData);
                 sendTCIPbytes(data2);
                 sendTCP("Odobreno");
-                print2list("Korisniku je dozvoljen prolaz");
+                print2list($"Korisniku ID: {korisnik.Id} je dozvoljen prolaz");
                 RucnaDozvola = false;
                 upisiKorisnika(prolaz);
 

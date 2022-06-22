@@ -77,9 +77,10 @@ namespace Kontrola_Pristupa.Forme
                     txtDatum.Text = datum.ToString("yyyy-MM-dd");
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 MessageBox.Show("Nepostojeci korisnik");
+                MessageBox.Show(ex.Message);
             }
 
         }
